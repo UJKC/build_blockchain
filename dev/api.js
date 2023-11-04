@@ -4,6 +4,10 @@ const app = express();
 
 const bodyparser = require('body-parser');
 
+const Blockchain = require('./blockchain')
+
+const bitcoin = new Blockchain();
+
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
 
@@ -12,15 +16,17 @@ app.get('/', (req, res) => {
 });
 
 app.get('/blockchain', (req, res) => {
-    res.send("Hi listening already dw.");
+    res.send(bitcoin);
 });
 
 app.post('/transaction', (req, res) => {
-    console.log(req.body);
-    res.send(`Hi, listening already, and the amount is ${req.body.amount} amount.`);
+    const blockIndex = bitcoin.createNewTransaction(req.body.amount, req.body.sender, req.body.recipient);
+    res.json({ note: `Transaction will be added in a block ${blockIndex} .`})
 });
 
 app.get('/mine', (req, res) => {
+    const lastBlock = bitcoin.
+    const newBlock = bitcoin.createNewBlock()
     res.send("Hi listening already dw.");
 });
 
