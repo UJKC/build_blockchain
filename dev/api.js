@@ -6,9 +6,9 @@ const bodyparser = require('body-parser');
 
 const Blockchain = require('./blockchain');
 
-const uuid = require('uuid/v1');
+const uuid = require('uuid');
 
-const nodeAddress = uuid().split('-').join(" ");
+const nodeAddress = uuid.v1().split('-').join("");
 
 const bitcoin = new Blockchain();
 
