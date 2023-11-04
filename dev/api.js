@@ -1,6 +1,11 @@
-var express = require('express');
+const express = require('express');
 
-var app = express();
+const app = express();
+
+const bodyparser = require('body-parser');
+
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({ extended: false }));
 
 app.get('/', (req, res) => {
     res.send("Hi listening already dw.");
@@ -13,7 +18,6 @@ app.get('/blockchain', (req, res) => {
 app.post('/transaction', (req, res) => {
     console.log(req.body);
     res.send(`Hi, listening already, and the amount is ${req.body.amount} amount.`);
-    res.send("Hi listening already dw.");
 });
 
 app.get('/mine', (req, res) => {
