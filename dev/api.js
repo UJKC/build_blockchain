@@ -10,7 +10,9 @@ app.get('/blockchain', (req, res) => {
     res.send("Hi listening already dw.");
 });
 
-app.get('/transaction', (req, res) => {
+app.post('/transaction', (req, res) => {
+    console.log(req.body);
+    res.send(`Hi, listening already, and the amount is ${req.body.amount} amount.`);
     res.send("Hi listening already dw.");
 });
 
