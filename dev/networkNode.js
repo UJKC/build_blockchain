@@ -143,7 +143,7 @@ This code block is part of a blockchain network and is responsible for registeri
 */
 
 app.post('/register-node', (req, res) => {
-    const newNodeUrl = new req.body.newNodeUrl;
+    const newNodeUrl = req.body.newNodeUrl;
     const notCurrntURl = bitcoin.currentNodeUrl !== newNodeUrl;
     if ( (bitcoin.networkNodes.indexOf(newNodeUrl) == -1) && notCurrntURl ) {
         bitcoin.networkNodes.push(newNodeUrl);
@@ -154,7 +154,16 @@ app.post('/register-node', (req, res) => {
 });
 
 app.post('/register-node-bulk', (req, res) => {
-    
+    const allNetworkNodes = req.body.allNetworkNodes;
+    allNetworkNodes.forEach(networkNodeUrl => {
+        const notCurrntURl = bitcoin.currentNodeUrl !== networkNodeUrl;
+        if ( (bitcoin.networkNodes.indexOf(networkNodeUrl) == -1) && notCurrntURl) {
+            bitcoin.networkNodes.push(networkNodeUrl);
+        }
+    });
+    res.json({
+        message: "Bulk registration successful"
+    });
 });
 
 app.listen(port, () => {
