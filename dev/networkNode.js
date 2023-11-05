@@ -75,6 +75,32 @@ app.post('/register-and-broadcast-node', (req, res) => {
 });
 
 /*
+In the provided code:
+
+```javascript
+bitcoin.networkNodes.forEach(newNodeUrl => {
+    const requestOption = {
+        uri: newNodeUrl + '/register-node',
+        method: 'POST',
+        body: { 
+            newNodeUrl: newNodeUrl,
+            json: true
+        }
+    };
+    registerNodePromises.push(rp(requestOption));
+});
+```
+
+`newNodeUrl` is a variable that represents each element (URL) in the `bitcoin.networkNodes` array. This loop iterates through each element in the `bitcoin.networkNodes` array, and for each element (URL), it creates a `requestOption` object.
+
+Here's what happens inside the loop:
+
+- `newNodeUrl` represents an element (a URL) from the `bitcoin.networkNodes` array for each iteration.
+- The `requestOption` object is constructed with properties specific to that `newNodeUrl`. It contains the URL (`uri`) for the specific node's registration endpoint, which is formed by appending `/register-node` to the `newNodeUrl`.
+- The `body` property of the `requestOption` object is an object containing the `newNodeUrl` that corresponds to the current node, and `json: true` indicates that the body should be sent as JSON.
+
+In summary, `newNodeUrl` is a variable representing the URL of each node in the `bitcoin.networkNodes` array, and for each node, a separate request is constructed with its unique URL to send a registration request. The loop processes all nodes in the `bitcoin.networkNodes` array, creating a separate request for each.
+
 Sure, I'll explain the code block you provided step by step:
 
 1. **Endpoint Definition**:
