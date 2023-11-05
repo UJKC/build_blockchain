@@ -15,7 +15,7 @@ const bitcoin = new Blockchain();
 // Make it access package.json start file
 const port = process.argv[2]
 
-const rp = require('request-promise');
+const rp = require('request');
 
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
