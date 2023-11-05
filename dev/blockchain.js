@@ -1,9 +1,13 @@
 const { stringify } = require('querystring');
 const sha256 = require('sha256')
+const currentNodeUrl = process.argv[3];
 
 function Blockchain() {
     this.chain = [];
     this.pendingTrasactions = [];
+
+    this.currentNodeUrl = currentNodeUrl;
+    this.networkNodes = [];
 
     this.createNewBlock(103292, '0', '0');
 }
