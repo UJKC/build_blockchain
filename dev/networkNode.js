@@ -52,20 +52,21 @@ app.get('/mine', (req, res) => {
 });
 
 app.post('/register-and-broadcast-node', (req, res) => {
-    const newNodeUrl = new req.body.newNodeUrl;
+    const newNodeUrl = req.body.newNodeUrl;
     if (bitcoin.networkNodes.indexOf(newNodeUrl) == -1) {
         bitcoin.networkNodes.push(newNodeUrl);
     }
     const registerNodePromises = [];
-    bitcoin.networkNodes.forEach(newNodeUrl => {
+    bitcoin.networkNodes.forEach(networkNodeUrl => {
         const requestOption = {
-            uri: newNodeUrl + '/register-node',
+            uri: networkNodeUrl + '/register-node',
             method: 'POST',
             body: { 
-                newNodeUrl: newNodeUrl,
-                json: true
-            }
+                newNodeUrl: newNodeUrl
+            },
+            json: true
         };
+
         registerNodePromises.push(rp(requestOption));
     });
     Promise.all(registerNodePromises)
@@ -74,7 +75,7 @@ app.post('/register-and-broadcast-node', (req, res) => {
             uri: newNodeUrl + '/register-node-bulk',
             method: 'POST',
             body: {
-                allNetworkNodes: [ bitcoin.networkNodes, bitcoin.currentNodeUrl]
+                allNetworkNodes: [ ...bitcoin.networkNodes, bitcoin.currentNodeUrl]
             },
             json: true
         };
