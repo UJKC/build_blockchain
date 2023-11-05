@@ -69,9 +69,22 @@ app.post('/register-and-broadcast-node', (req, res) => {
         registerNodePromises.push(rp(requestOption));
     });
     Promise.all(registerNodePromises)
-    .then(data =>{
-
-    });
+    .then(data => {
+        const bulkRegisterOption = {
+            uri: newNodeUrl + '/register-node-bulk',
+            method: 'POST',
+            body: {
+                allNetworkNodes: [ bitcoin.networkNodes, bitcoin.currentNodeUrl]
+            },
+            json: true
+        };
+        return rp(bulkRegisterOption);
+    })
+    .then(data => {
+        res.json({
+            message: "New node registered"
+        });
+    })
 });
 
 /*
@@ -130,14 +143,11 @@ This code block is part of a blockchain network and is responsible for registeri
 */
 
 app.post('/register-node', (req, res) => {
-    const blockIndex = bitcoin.createNewTransaction(req.body.amount, req.body.sender, req.body.recipient);
     
-    res.json({ note: `Transaction will be added in a block ${blockIndex} .`});
 });
 
 app.post('/register-node-bulk', (req, res) => {
-    const blockIndex = bitcoin.createNewTransaction(req.body.amount, req.body.sender, req.body.recipient);
-    res.json({ note: `Transaction will be added in a block ${blockIndex} .`});
+    
 });
 
 app.listen(port, () => {
