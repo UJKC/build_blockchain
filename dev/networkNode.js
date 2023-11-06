@@ -29,8 +29,11 @@ app.get('/blockchain', (req, res) => {
 });
 
 app.post('/transaction', (req, res) => {
-    const blockIndex = bitcoin.createNewTransaction(req.body.amount, req.body.sender, req.body.recipient);
-    res.json({ note: `Transaction will be added in a block ${blockIndex} .`});
+    const newTransaction = req.body;
+    const blockIndex = bitcoin.addTransactionToPendingTransaction(newTransaction);
+    res.json({
+        message: `New Transaction will be added in block ${blockIndex}`
+    });
 });
 
 app.get('/mine', (req, res) => {
@@ -168,7 +171,7 @@ app.post('/register-node-bulk', (req, res) => {
 });
 
 app.post('/transaction/broadcast', (req, res) => {
-    const newTransaction = bitcoin.createNewTransaction(req.body.amount, req.body.sender, req.body.reciever);
+    const newTransaction = bitcoin.createNewTransaction(req.body.amount, req.body.sender, req.body.recipient);
     bitcoin.addTransactionToPendingTransaction(newTransaction);
     const registerNodePromises = [];
     bitcoin.networkNodes.forEach(networkNodeUrl => {
