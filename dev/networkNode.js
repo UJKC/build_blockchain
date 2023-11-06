@@ -45,13 +45,39 @@ app.get('/mine', (req, res) => {
     };
     const nonce = bitcoin.proofOfWork(previousBlockHash, currentBlockData);
     const blockHash = bitcoin.hashBlock(previousBlockHash, currentBlockData, nonce);
-
-    bitcoin.createNewTransaction(12.5, "00", nodeAddress);
-    const newBlock = bitcoin.createNewBlock(nonce, previousBlockHash, blockHash)
-    res.json({
-        note: "New Block mined Successfully",
-        block: newBlock
+    const newBlock = bitcoin.createNewBlock(nonce, previousBlockHash, blockHash);
+    const registerNodePromises = [];
+    bitcoin.networkNodes.forEach(networkNodeUrl => {
+        const requestOption = {
+            uri: networkNodeUrl + '/recieve-new-block',
+            method: 'POST',
+            body: { 
+                newBlock: newBlock
+            },
+            json: true
+        };
+        registerNodePromises.push(rp(requestOption));
     });
+    Promise.all(registerNodePromises)
+    .then(data => {
+        const registerOption = {
+            uri: bitcoin.currentNodeUrl + '/transaction/broadcast',
+            method: 'POST',
+            body: {
+                amount: 12.5,
+                sender: "00",
+                recipient: nodeAddress
+            },
+            json: true
+        };
+        return rp(registerOption);
+    })
+    .then(data => {
+        res.json({
+            note: "New Block mined & broadcast Successfully",
+            block: newBlock
+        });  
+    })
 });
 
 app.post('/register-and-broadcast-node', (req, res) => {
@@ -189,6 +215,27 @@ app.post('/transaction/broadcast', (req, res) => {
         message: 'transaction broadcasted to all nodes'
        });
     })
+});
+
+app.post('/recieve-new-block', (req, res) => {
+    const newBlock = req.body.newBlock;
+    const lastBlock = bitcoin.getLastBlock();
+    const correctHash = lastBlock.hash == newBlock.previousBlockHash;
+    const correctIndex = (lastBlock['index'] + 1) == newBlock['index'];
+    if (correctHash && correctIndex) {
+        bitcoin.chain.push(newBlock);
+        bitcoin.pendingTrasactions = [];
+        res.json({
+            message: "New block recieved and accepted",
+            newBlock: newBlock
+        });
+    }
+    else {
+        res.json({
+            message: "New block rejected",
+            newBlock: newBlock
+        });
+    }
 });
 
 app.listen(port, () => {
