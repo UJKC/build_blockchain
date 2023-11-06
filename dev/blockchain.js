@@ -1,6 +1,7 @@
 const { stringify } = require('querystring');
 const sha256 = require('sha256')
 const currentNodeUrl = process.argv[3];
+const uuid = require('uuid');
 
 function Blockchain() {
     this.chain = [];
@@ -37,10 +38,14 @@ Blockchain.prototype.createNewTransaction = function(amount, sender, recipient) 
         amount: amount,
         sender: sender,
         recipient: recipient,
+        transactionId: uuid.v1().split('-').join("")
     };
 
-    this.pendingTrasactions.push(newTransaction);
+    return newTransaction;
+}
 
+Blockchain.prototype.addTransactionToPendingTransaction = function(transactionObj) {
+    this.pendingTrasactions.push(transactionObj);
     return this.getLastBlock()['index'] + 1;
 }
 

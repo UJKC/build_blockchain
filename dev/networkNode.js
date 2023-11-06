@@ -167,6 +167,27 @@ app.post('/register-node-bulk', (req, res) => {
     });
 });
 
+app.post('/transaction/broadcast', (req, res) => {
+    const newTransaction = bitcoin.createNewTransaction(req.body.amount, req.body.sender, req.body.reciever);
+    bitcoin.addTransactionToPendingTransaction(newTransaction);
+    const registerNodePromises = [];
+    bitcoin.networkNodes.forEach(networkNodeUrl => {
+        const requestOption = {
+            uri: networkNodeUrl + '/transaction',
+            method: 'POST',
+            body: newTransaction,
+            json: true
+        };
+        registerNodePromises.push(rp(requestOption));
+    });
+    Promise.all(registerNodePromises)
+    .then(data => {
+       res.json({
+        message: 'transaction broadcasted to all nodes'
+       });
+    })
+});
+
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
