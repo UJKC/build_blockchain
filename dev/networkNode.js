@@ -294,6 +294,15 @@ app.get('/block/:blockHash', (req, res) => {
     })
 })
 
+app.get('/block/:transactionId', (req, res) => {
+    const transactionId = req.params.transactionId;
+    const transactionData = bitcoin.getTransaction(transactionId);
+    res.json({
+        transaction: transactionData.transaction,
+        block: transactionData.block
+    });
+});
+
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
