@@ -109,6 +109,16 @@ Blockchain.prototype.chainIsValid = function(blockchain) {
 	return validChain;
 }
 
+Blockchain.prototype.getBlock = function(blockHash) {
+    let correctBlock = null;
+    this.chain.forEach(block => {
+        if (block.hash === blockHash) {
+            correctBlock = block;
+        }
+    })
+    return correctBlock;
+}
+
 
 
 

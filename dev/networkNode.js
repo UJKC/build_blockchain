@@ -286,6 +286,15 @@ app.get('/consensus', function(req, res) {
 	});
 });
 
+app.get('/block/:blockHash', (req, res) => {
+    const blockHash = req.params.blockHash;
+    const correctBlock = bitcoin.getBlock(blockHash);
+    res.json({
+        message: correctBlock
+    })
+})
+
+
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
@@ -298,3 +307,5 @@ app.listen(port, () => {
 // get reward in the same block of miner
 // add smat contract inside it
 // make it more releavent
+// if central system wants to change it can do so by invol=king an endpoint and heavy reward to other computer
+// security computer holds the last block hash and other data and varifies central system time to time
