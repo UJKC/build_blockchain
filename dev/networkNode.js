@@ -334,3 +334,4 @@ app.listen(port, () => {
 // If sender has that many coin to send
 // If server goes down then remve from network node
 // get ip automatically
+// have some things for ledger smart contract etc
