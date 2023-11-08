@@ -289,7 +289,7 @@ app.get('/block/:blockHash', (req, res) => {
     const blockHash = req.params.blockHash;
     const correctBlock = bitcoin.getBlock(blockHash);
     res.json({
-        message: correctBlock
+        block: correctBlock
     })
 })
 
@@ -306,8 +306,14 @@ app.get('/address/:address' ,(req, res) => {
     const address = req.params.address;
     const addressData = bitcoin.getAddressData(address);
     res.json({
-        transaction: addressData
-    })
+        addressData: addressData
+    });
+})
+
+app.get('/block-explorer', (req, res) => {
+    res.sendFile('./blockexplorer/index.html', {
+        root: __dirname
+    });
 })
 
 
@@ -325,3 +331,5 @@ app.listen(port, () => {
 // make it more releavent
 // if central system wants to change it can do so by invol=king an endpoint and heavy reward to other computer
 // security computer holds the last block hash and other data and varifies central system time to time
+// If sender has that many coin to send
+// If server goes down then remve from network node
