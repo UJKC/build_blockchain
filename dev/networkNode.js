@@ -16,6 +16,7 @@ const bitcoin = new Blockchain();
 const port = process.argv[2]
 
 const rp = require('request');
+const requestPromise = require('request');
 
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
@@ -40,7 +41,7 @@ app.get('/mine', (req, res) => {
     const lastBlock = bitcoin.getLastBlock();
     const previousBlockHash = lastBlock['hash'];
     const currentBlockData = {
-        transaction: bitcoin.pendingTrasactions,
+        transaction: bitcoin.pendingTrasaction,
         index: lastBlock['index'] + 1,
     };
     const nonce = bitcoin.proofOfWork(previousBlockHash, currentBlockData);
@@ -238,6 +239,62 @@ app.post('/recieve-new-block', (req, res) => {
     }
 });
 
+app.get('/consensus', function(req, res) {
+	const requestPromises = [];
+	bitcoin.networkNodes.forEach(networkNodeUrl => {
+		const requestOptions = {
+			uri: networkNodeUrl + '/blockchain',
+			method: 'GET',
+			json: true
+		};
+
+		requestPromises.push(rp(requestOptions));
+	});
+
+	Promise.all(requestPromises)
+	.then(blockchains => {
+        console.log(blockchains.length)
+		const currentChainLength = bitcoin.chain.length;
+		let maxChainLength = currentChainLength;
+		let newLongestChain = null;
+		let newPendingTransactions = null;
+
+		blockchains.forEach(blockchain => {
+            console.log(blockchain);
+			if (blockchain.chain.length > maxChainLength) {
+				maxChainLength = blockchain.chain.length;
+				newLongestChain = blockchain.chain;
+				newPendingTransactions = blockchain.pendingTransactions;
+			};
+		});
+
+
+		if (!newLongestChain || (newLongestChain && !bitcoin.chainIsValid(newLongestChain))) {
+			res.json({
+				note: 'Current chain has not been replaced.',
+				chain: bitcoin.chain
+			});
+		}
+		else {
+			bitcoin.chain = newLongestChain;
+			bitcoin.pendingTransactions = newPendingTransactions;
+			res.json({
+				note: 'This chain has been replaced.',
+				chain: bitcoin.chain
+			});
+		}
+	});
+});
+
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
+
+
+// Test centralised blockchain network for backup
+// Only single or just multiple miner nodes
+// consensus error
+// new node automatic transaction buildup of central node
+// get reward in the same block of miner
+// add smat contract inside it
+// make it more releavent
