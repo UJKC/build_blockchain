@@ -294,7 +294,7 @@ app.get('/block/:blockHash', (req, res) => {
     })
 })
 
-app.get('/block/:transactionId', (req, res) => {
+app.get('/transactionsearch/:transactionId', (req, res) => {
     const transactionId = req.params.transactionId;
     const transactionData = bitcoin.getTransaction(transactionId);
     res.json({
