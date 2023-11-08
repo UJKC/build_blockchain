@@ -333,3 +333,4 @@ app.listen(port, () => {
 // security computer holds the last block hash and other data and varifies central system time to time
 // If sender has that many coin to send
 // If server goes down then remve from network node
+// get ip automatically
